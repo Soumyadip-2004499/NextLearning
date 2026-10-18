@@ -313,6 +313,11 @@ html.light .tape-label,
   color: #09090b !important;
 }
 
+html.light .tape-label span:not(.red-dot),
+[data-theme="light"] .tape-label span:not(.red-dot) {
+  color: inherit;
+}
+
 html.light .glyph-pill,
 [data-theme="light"] .glyph-pill {
   border: 1px solid rgba(0, 0, 0, 0.12) !important;
@@ -505,22 +510,44 @@ html.light .text-white:not([class*="bg-red"]):not([class*="bg-[#eb0028]"]):not(.
 
 /* Ensure red elements and buttons KEEP crisp white text */
 html.light .keep-white,
-html.light [class*="bg-[#eb0028]"] .text-white,
-html.light [class*="bg-[#eb0028]"] svg,
-html.light [class*="bg-[#eb0028]"] span,
-html.light button[class*="bg-[#eb0028]"],
-html.light button[class*="bg-[#eb0028]"] *,
-html.light a[class*="bg-[#eb0028]"],
-html.light a[class*="bg-[#eb0028]"] *,
+html.light button.bg-\[\#eb0028\],
+html.light button.bg-\[\#eb0028\] *,
+html.light button.bg-red-600,
+html.light button.bg-red-600 *,
+html.light button[data-variant="red"],
+html.light button[data-variant="red"] *,
+html.light a.bg-\[\#eb0028\],
+html.light a.bg-\[\#eb0028\] *,
+html.light .btn-red,
+html.light .btn-red *,
 [data-theme="light"] .keep-white,
-[data-theme="light"] [class*="bg-[#eb0028]"] .text-white,
-[data-theme="light"] [class*="bg-[#eb0028]"] svg,
-[data-theme="light"] [class*="bg-[#eb0028]"] span,
-[data-theme="light"] button[class*="bg-[#eb0028]"],
-[data-theme="light"] button[class*="bg-[#eb0028]"] *,
-[data-theme="light"] a[class*="bg-[#eb0028]"],
-[data-theme="light"] a[class*="bg-[#eb0028]"] * {
+[data-theme="light"] button.bg-\[\#eb0028\],
+[data-theme="light"] button.bg-\[\#eb0028\] *,
+[data-theme="light"] button.bg-red-600,
+[data-theme="light"] button.bg-red-600 *,
+[data-theme="light"] button[data-variant="red"],
+[data-theme="light"] button[data-variant="red"] *,
+[data-theme="light"] a.bg-\[\#eb0028\],
+[data-theme="light"] a.bg-\[\#eb0028\] *,
+[data-theme="light"] .btn-red,
+[data-theme="light"] .btn-red * {
   color: #ffffff !important;
+}
+
+/* Ensure Brand Red Accent Text Always Stays Vibrant Red in Light Mode */
+html.light .text-\[\#eb0028\],
+html.light span.text-\[\#eb0028\],
+html.light .font-dot.text-\[\#eb0028\],
+[data-theme="light"] .text-\[\#eb0028\],
+[data-theme="light"] span.text-\[\#eb0028\],
+[data-theme="light"] .font-dot.text-\[\#eb0028\] {
+  color: #eb0028 !important;
+}
+
+/* Dot matrix font inherits proper readable color in light mode */
+html.light .font-dot:not(.keep-white):not(.text-\[\#eb0028\]):not([class*="text-red"]):not([class*="text-emerald"]):not([class*="text-blue"]):not([class*="text-amber"]):not([class*="text-sky"]),
+[data-theme="light"] .font-dot:not(.keep-white):not(.text-\[\#eb0028\]):not([class*="text-red"]):not([class*="text-emerald"]):not([class*="text-blue"]):not([class*="text-amber"]):not([class*="text-sky"]) {
+  color: inherit;
 }
 
 html.light .text-neutral-400,
