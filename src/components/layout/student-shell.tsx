@@ -112,7 +112,7 @@ export function StudentShell({
   ];
 
   const displayName =
-    studentProfile?.displayName || user.name || "Soumyadip Chattopadhyay";
+    studentProfile?.displayName || user.name || "Demo Student";
   const initials = displayName
     .split(" ")
     .map((n) => n[0])

@@ -2453,14 +2453,14 @@ async function main() {
   const studentUser = await prisma.user.upsert({
     where: { email: 'demo@student.com' },
     update: {
-      name: 'Soumyadip Chattopadhyay',
+      name: 'Demo Student',
       phone: '+919876543210',
       passwordHash: DEMO_PASSWORD_HASH,
       role: Role.STUDENT,
       language: 'en',
     },
     create: {
-      name: 'Soumyadip Chattopadhyay',
+      name: 'Demo Student',
       email: 'demo@student.com',
       phone: '+919876543210',
       passwordHash: DEMO_PASSWORD_HASH,
@@ -2472,7 +2472,7 @@ async function main() {
   const studentProfile = await prisma.studentProfile.upsert({
     where: { userId: studentUser.id },
     update: {
-      displayName: 'Soumyadip Chattopadhyay',
+      displayName: 'Demo Student',
       educationLevel: 'class_10',
       state: 'West Bengal',
       district: 'Kolkata',

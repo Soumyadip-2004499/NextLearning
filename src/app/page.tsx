@@ -119,7 +119,7 @@ export default function LandingPage() {
               </div>
               <div className="flex flex-col">
                 <span className="font-dot text-xl sm:text-2xl font-bold tracking-widest text-foreground group-hover:text-red-500 transition-colors">
-                  NEXTLEARNING<span className="text-[#eb0028]">.</span>OS
+                  NEXTLEARNING
                 </span>
                 <span className="text-[10px] font-mono tracking-widest text-muted-foreground">
                   LEARNING → LIVELIHOOD
@@ -163,12 +163,7 @@ export default function LandingPage() {
                   SIGN IN
                 </Button>
               </Link>
-              <Link href="/facilitator">
-                <Button variant="outline" size="sm" className="font-mono text-xs border-sky-300 dark:border-sky-500/30 text-sky-600 dark:text-sky-400 hover:bg-sky-50 dark:hover:bg-sky-950/30">
-                  FACILITATOR
-                </Button>
-              </Link>
-              <Link href="/dashboard">
+              <Link href="/api/auth/demo-student">
                 <Button variant="red" size="sm" className="font-mono text-xs gap-2 keep-white">
                   <span className="w-1.5 h-1.5 rounded-full bg-white animate-pulse" />
                   <span className="keep-white">STUDENT DEMO</span>
@@ -228,19 +223,14 @@ export default function LandingPage() {
                   <div className="pb-1">
                     <ThemeToggle variant="full" />
                   </div>
-                  <Link href="/dashboard" className="w-full">
+                  <Link href="/api/auth/demo-student" className="w-full">
                     <Button variant="red" className="w-full font-mono text-xs keep-white">
-                      <span className="keep-white">STUDENT CONSOLE (SOUMYADIP)</span>
-                    </Button>
-                  </Link>
-                  <Link href="/facilitator" className="w-full">
-                    <Button variant="outline" className="w-full font-mono text-xs text-sky-600 dark:text-sky-400 border-border">
-                      FACILITATOR PORTAL (G. SAI KAVYA)
+                      <span className="keep-white">STUDENT DEMO</span>
                     </Button>
                   </Link>
                   <Link href="/auth/login" className="w-full">
-                    <Button variant="ghost" className="w-full font-mono text-xs">
-                      SIGN IN TERMINAL
+                    <Button variant="outline" className="w-full font-mono text-xs">
+                      SIGN IN
                     </Button>
                   </Link>
                 </div>
@@ -304,7 +294,7 @@ export default function LandingPage() {
               transition={{ duration: 0.6, delay: 0.3 }}
               className="mt-10 flex flex-col sm:flex-row items-center justify-center gap-4"
             >
-              <Link href="/dashboard" className="w-full sm:w-auto">
+              <Link href="/api/auth/demo-student" className="w-full sm:w-auto">
                 <Button
                   size="lg"
                   className="w-full sm:w-auto bg-black dark:bg-white text-white dark:text-black font-semibold hover:bg-neutral-800 dark:hover:bg-neutral-200 border border-black dark:border-white shadow-md font-mono text-sm px-8"
@@ -649,16 +639,16 @@ export default function LandingPage() {
       {/* Facilitator Mode Banner */}
       <section className="py-20 border-t border-border">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="rounded-[30px] border border-border bg-gradient-to-r from-card via-muted/30 to-card dark:from-[#121216] dark:via-[#1a1a22] dark:to-[#121216] p-8 sm:p-14 flex flex-col md:flex-row items-center justify-between gap-8 text-foreground shadow-sm">
+          <div className="rounded-[30px] border border-border bg-card dark:bg-[#121216] p-8 sm:p-14 flex flex-col md:flex-row items-center justify-between gap-8 text-foreground shadow-sm">
             <div className="max-w-2xl">
-              <div className="tape-label border-emerald-500/30 text-emerald-700 dark:text-emerald-400 mb-4">
+              <div className="tape-label border-emerald-600/30 text-emerald-700 dark:text-emerald-400 mb-4 bg-emerald-500/10">
                 <Users className="w-3.5 h-3.5" />
                 <span>COMMUNITY MULTIPLIER EFFECT</span>
               </div>
-              <h2 className="text-2xl sm:text-4xl font-bold uppercase tracking-tight mb-4 text-foreground">
+              <h2 className="text-2xl sm:text-4xl font-bold uppercase tracking-tight mb-4 text-neutral-900 dark:text-white font-dot">
                 TEACHER & VILLAGE FACILITATOR CONSOLE
               </h2>
-              <p className="text-muted-foreground text-sm leading-relaxed font-sans">
+              <p className="text-neutral-600 dark:text-neutral-400 text-sm leading-relaxed font-sans">
                 One village teacher or NGO coordinator can spot talent and guide multiple students.
                 Inspect student roadmaps, assign personalized training modules, and deliver
                 scholarship recommendations.
@@ -666,12 +656,12 @@ export default function LandingPage() {
             </div>
             <div className="flex flex-col sm:flex-row gap-3 w-full md:w-auto">
               <Link href="/facilitator" className="w-full sm:w-auto">
-                <Button variant="default" size="lg" className="w-full font-mono text-xs">
-                  FACILITATOR CONSOLE
+                <Button size="lg" className="w-full font-mono text-xs bg-black text-white dark:bg-white dark:text-black border border-black dark:border-white shadow-sm hover:bg-neutral-800 dark:hover:bg-neutral-200">
+                  <span className="font-semibold">FACILITATOR CONSOLE</span>
                 </Button>
               </Link>
               <Link href="/facilitator/modules/new" className="w-full sm:w-auto">
-                <Button variant="outline" size="lg" className="w-full font-mono text-xs border-border">
+                <Button variant="outline" size="lg" className="w-full font-mono text-xs border-border text-foreground hover:bg-muted">
                   BUILD TRAINING MODULE
                 </Button>
               </Link>
@@ -689,7 +679,7 @@ export default function LandingPage() {
                 <span className="red-dot" />
               </div>
               <span className="font-dot text-lg font-bold tracking-widest text-foreground">
-                NEXTLEARNING<span className="text-[#eb0028]">.</span>OS
+                NEXTLEARNING
               </span>
             </div>
             <div className="flex flex-wrap items-center gap-6 font-mono text-xs text-muted-foreground">

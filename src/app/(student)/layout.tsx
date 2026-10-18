@@ -42,7 +42,7 @@ export default async function StudentLayout({
 
   const defaultUser = user || {
     id: "demo-student-id",
-    name: "Soumyadip Chattopadhyay",
+    name: "Demo Student",
     email: "demo@student.com",
     role: "STUDENT" as const,
     language: "en",
@@ -58,7 +58,7 @@ export default async function StudentLayout({
               displayName:
                 studentProfile.displayName ||
                 defaultUser.name ||
-                "Soumyadip Chattopadhyay",
+                "Demo Student",
               educationLevel: studentProfile.educationLevel,
               careerPreference: studentProfile.careerPreference,
               district: studentProfile.district,
