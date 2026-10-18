@@ -22,7 +22,7 @@ export interface GeminiConfigOptions {
   topP?: number;
 }
 
-const DEFAULT_MODEL = process.env.GEMINI_MODEL || 'gemini-3.8-flash';
+const DEFAULT_MODEL = process.env.GEMINI_MODEL || 'gemini-2.5-flash';
 const DEFAULT_TEMPERATURE = process.env.GEMINI_TEMPERATURE
   ? parseFloat(process.env.GEMINI_TEMPERATURE)
   : 0.75;
