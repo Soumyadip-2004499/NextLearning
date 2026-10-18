@@ -1,0 +1,469 @@
+// Prisma schema for NextLearning Platform
+// Database: SQLite (dev) → PostgreSQL (prod)
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider  = "postgresql"
+  url       = env("DATABASE_URL")
+  directUrl = env("DIRECT_URL")
+}
+
+// ============================================
+// USER & AUTHENTICATION
+// ============================================
+
+model User {
+  id            String    @id @default(cuid())
+  name          String?
+  email         String?   @unique
+  phone         String?   @unique
+  passwordHash  String?
+  role          Role      @default(STUDENT)
+  language      String    @default("en")
+  image         String?
+  emailVerified DateTime?
+  createdAt     DateTime  @default(now())
+  updatedAt     DateTime  @updatedAt
+
+  studentProfile    StudentProfile?
+  facilitatorProfile FacilitatorProfile?
+  accounts          Account[]
+  sessions          Session[]
+
+  @@index([role])
+}
+
+model Account {
+  id                String  @id @default(cuid())
+  userId            String
+  type              String
+  provider          String
+  providerAccountId String
+  refresh_token     String?
+  access_token      String?
+  expires_at        Int?
+  token_type        String?
+  scope             String?
+  id_token          String?
+  session_state     String?
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([provider, providerAccountId])
+}
+
+model Session {
+  id           String   @id @default(cuid())
+  sessionToken String   @unique
+  userId       String
+  expires      DateTime
+  user         User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+}
+
+enum Role {
+  STUDENT
+  FACILITATOR
+  ADMIN
+}
+
+// ============================================
+// STUDENT PROFILE
+// ============================================
+
+model StudentProfile {
+  id              String   @id @default(cuid())
+  userId          String   @unique
+  displayName     String?
+  educationLevel  String?  // e.g., "class_9", "class_10", "class_12", "graduate"
+  state           String?
+  district        String?
+  interests       String?  // JSON array stored as text
+  hobbies         String?  // JSON array stored as text
+  favoriteSubjects String? // JSON array stored as text
+  skills          String?  // JSON array stored as text
+  careerAspirations String? // JSON array stored as text
+  learningStyle   String?  // visual, auditory, reading, kinesthetic
+  careerPreference String? // employment, education, vocational, entrepreneurship
+  class10Marks    String?  // e.g. "88.5% (Distinction)"
+  class12Marks    String?  // e.g. "86.4% (First Division)"
+  academicPerformance String? // JSON metadata on board, stream, marks
+  availableHours  Int?     // hours per week
+  deviceAccess    String?  // smartphone, tablet, computer, shared
+  onboardingCompleted Boolean @default(false)
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
+
+  user             User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  savedOpportunities SavedOpportunity[]
+  roadmaps         LearningRoadmap[]
+  applicationRecords ApplicationRecord[]
+  studentGroups    StudentGroupMember[]
+  facilitatorAssignments FacilitatorStudentAssignment[]
+  progressRecords  StudentProgress[]
+}
+
+// ============================================
+// FACILITATOR PROFILE
+// ============================================
+
+model FacilitatorProfile {
+  id            String   @id @default(cuid())
+  userId        String   @unique
+  displayName   String?
+  organization  String?
+  expertise     String?  // JSON array
+  state         String?
+  district      String?
+  verifiedAt    DateTime?
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
+
+  user             User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  studentAssignments FacilitatorStudentAssignment[]
+  studentGroups    StudentGroup[]
+  trainingModules  TrainingModule[]
+  recommendations  FacilitatorRecommendation[]
+}
+
+model FacilitatorStudentAssignment {
+  id              String   @id @default(cuid())
+  facilitatorId   String
+  studentId       String
+  notes           String?
+  assignedAt      DateTime @default(now())
+
+  facilitator FacilitatorProfile @relation(fields: [facilitatorId], references: [id], onDelete: Cascade)
+  student     StudentProfile     @relation(fields: [studentId], references: [id], onDelete: Cascade)
+
+  @@unique([facilitatorId, studentId])
+}
+
+model StudentGroup {
+  id              String   @id @default(cuid())
+  name            String
+  description     String?
+  facilitatorId   String
+  createdAt       DateTime @default(now())
+
+  facilitator FacilitatorProfile @relation(fields: [facilitatorId], references: [id], onDelete: Cascade)
+  members     StudentGroupMember[]
+}
+
+model StudentGroupMember {
+  id        String @id @default(cuid())
+  groupId   String
+  studentId String
+  joinedAt  DateTime @default(now())
+
+  group   StudentGroup   @relation(fields: [groupId], references: [id], onDelete: Cascade)
+  student StudentProfile @relation(fields: [studentId], references: [id], onDelete: Cascade)
+
+  @@unique([groupId, studentId])
+}
+
+// ============================================
+// CAREERS & SKILLS
+// ============================================
+
+model Career {
+  id              String   @id @default(cuid())
+  title           String
+  slug            String   @unique
+  category        String   // e.g., "technology", "healthcare", "agriculture"
+  description     String
+  requiredSkills  String   // JSON array
+  requiredQualifications String? // JSON array
+  salaryRange     String?
+  demandLevel     String?  // high, medium, low
+  growthOutlook   String?
+  firstSteps      String?  // JSON array
+  educationPaths  String?  // JSON array
+  relatedCareers  String?  // JSON array of career slugs
+  isSampleData    Boolean  @default(true)
+  sourceUrl       String?
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
+
+  skills       CareerSkill[]
+  roadmapSteps RoadmapStep[]
+}
+
+model Skill {
+  id          String   @id @default(cuid())
+  name        String   @unique
+  category    String   // technical, soft, vocational, academic
+  description String?
+  createdAt   DateTime @default(now())
+
+  careers CareerSkill[]
+}
+
+model CareerSkill {
+  id       String @id @default(cuid())
+  careerId String
+  skillId  String
+  importance String @default("required") // required, recommended, optional
+
+  career Career @relation(fields: [careerId], references: [id], onDelete: Cascade)
+  skill  Skill  @relation(fields: [skillId], references: [id], onDelete: Cascade)
+
+  @@unique([careerId, skillId])
+}
+
+// ============================================
+// LEARNING RESOURCES
+// ============================================
+
+model LearningResource {
+  id              String   @id @default(cuid())
+  title           String
+  description     String?
+  provider        String?
+  resourceType    String?  // video, course, article, activity, quiz
+  url             String?
+  language        String   @default("en")
+  educationLevel  String?  // JSON array of levels
+  subjects        String?  // JSON array
+  skills          String?  // JSON array of skill names
+  duration        String?
+  difficulty      String?  // beginner, intermediate, advanced
+  sourceDataset   String?  // e.g., "diksha", "manual"
+  sourceId        String?  // original ID from source
+  isSampleData    Boolean  @default(false)
+  verifiedAt      DateTime?
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
+
+  roadmapSteps RoadmapStep[]
+  datasetSource DatasetSource? @relation(fields: [sourceDataset], references: [id])
+
+  @@index([sourceDataset, sourceId])
+  @@index([language])
+}
+
+// ============================================
+// LEARNING ROADMAPS
+// ============================================
+
+model LearningRoadmap {
+  id           String   @id @default(cuid())
+  studentId    String
+  careerTitle  String
+  description  String?
+  status       String   @default("active") // active, paused, completed
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+
+  student StudentProfile @relation(fields: [studentId], references: [id], onDelete: Cascade)
+  steps   RoadmapStep[]
+}
+
+model RoadmapStep {
+  id           String   @id @default(cuid())
+  roadmapId    String
+  order        Int
+  title        String
+  description  String?
+  type         String   @default("learn") // learn, practice, exam, milestone
+  status       String   @default("pending") // pending, in_progress, completed, skipped
+  careerId     String?
+  resourceId   String?
+  duration     String?
+  completedAt  DateTime?
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+
+  roadmap  LearningRoadmap  @relation(fields: [roadmapId], references: [id], onDelete: Cascade)
+  career   Career?          @relation(fields: [careerId], references: [id])
+  resource LearningResource? @relation(fields: [resourceId], references: [id])
+}
+
+// ============================================
+// OPPORTUNITIES & SCHOLARSHIPS
+// ============================================
+
+model Opportunity {
+  id                String   @id @default(cuid())
+  title             String
+  category          String   // scholarship, scheme, apprenticeship, internship, mentorship, training, employment, entrepreneurship
+  provider          String?
+  description       String
+  eligibleLevels    String?  // JSON array
+  eligibilityRules  String?  // JSON array of rule objects
+  location          String?
+  skills            String?  // JSON array
+  openDate          DateTime?
+  closeDate         DateTime?
+  requiredDocuments String?  // JSON array
+  applicationUrl    String?
+  sourceUrl         String?
+  lastVerified      DateTime?
+  verificationStatus String  @default("unverified") // verified, unverified, expired, sample
+  isSampleData      Boolean  @default(true)
+  createdAt         DateTime @default(now())
+  updatedAt         DateTime @updatedAt
+
+  savedBy          SavedOpportunity[]
+  applicationRecords ApplicationRecord[]
+
+  @@index([category])
+  @@index([verificationStatus])
+}
+
+model SavedOpportunity {
+  id            String   @id @default(cuid())
+  studentId     String
+  opportunityId String
+  notes         String?
+  savedAt       DateTime @default(now())
+
+  student     StudentProfile @relation(fields: [studentId], references: [id], onDelete: Cascade)
+  opportunity Opportunity    @relation(fields: [opportunityId], references: [id], onDelete: Cascade)
+
+  @@unique([studentId, opportunityId])
+}
+
+model ApplicationRecord {
+  id            String   @id @default(cuid())
+  studentId     String
+  opportunityId String
+  status        String   @default("interested") // interested, checking_eligibility, preparing_documents, ready_to_apply, submitted, awaiting_response, completed, closed
+  notes         String?
+  nextAction    String?
+  statusHistory String?  // JSON array of {status, date, note}
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
+
+  student     StudentProfile @relation(fields: [studentId], references: [id], onDelete: Cascade)
+  opportunity Opportunity    @relation(fields: [opportunityId], references: [id], onDelete: Cascade)
+
+  @@unique([studentId, opportunityId])
+}
+
+// ============================================
+// TRAINING MODULES
+// ============================================
+
+model TrainingModule {
+  id              String   @id @default(cuid())
+  title           String
+  description     String?
+  targetLevel     String?
+  objectives      String?  // JSON array
+  facilitatorId   String
+  status          String   @default("draft") // draft, published, archived
+  accessType      String   @default("free")  // free, paid
+  estimatedDuration String?
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
+
+  facilitator FacilitatorProfile @relation(fields: [facilitatorId], references: [id], onDelete: Cascade)
+  lessons     ModuleLesson[]
+}
+
+model ModuleLesson {
+  id          String @id @default(cuid())
+  moduleId    String
+  order       Int
+  title       String
+  content     String?
+  resourceUrl String?
+  duration    String?
+  activityType String? // lesson, quiz, activity, assignment
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  module TrainingModule @relation(fields: [moduleId], references: [id], onDelete: Cascade)
+}
+
+// ============================================
+// MENTOR, NGO & EMPLOYER DIRECTORY
+// ============================================
+
+model Organization {
+  id           String   @id @default(cuid())
+  name         String
+  type         String   // mentor, ngo, training_provider, employer
+  description  String?
+  expertise    String?  // JSON array
+  location     String?
+  serviceArea  String?
+  contactUrl   String?
+  website      String?
+  verified     Boolean  @default(false)
+  isSampleData Boolean  @default(true)
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+
+  @@index([type])
+}
+
+// ============================================
+// STUDENT PROGRESS
+// ============================================
+
+model StudentProgress {
+  id          String   @id @default(cuid())
+  studentId   String
+  eventType   String   // onboarding_completed, career_explored, roadmap_started, resource_accessed, milestone_completed, opportunity_saved
+  eventData   String?  // JSON
+  createdAt   DateTime @default(now())
+
+  student StudentProfile @relation(fields: [studentId], references: [id], onDelete: Cascade)
+
+  @@index([studentId, eventType])
+}
+
+// ============================================
+// FACILITATOR RECOMMENDATIONS
+// ============================================
+
+model FacilitatorRecommendation {
+  id              String   @id @default(cuid())
+  facilitatorId   String
+  studentId       String
+  type            String   // resource, opportunity, career
+  referenceId     String   // ID of the recommended item
+  message         String?
+  isRead          Boolean  @default(false)
+  createdAt       DateTime @default(now())
+
+  facilitator FacilitatorProfile @relation(fields: [facilitatorId], references: [id], onDelete: Cascade)
+
+  @@index([studentId, isRead])
+}
+
+// ============================================
+// DATASET MANAGEMENT
+// ============================================
+
+model DatasetSource {
+  id           String   @id @default(cuid())
+  name         String   @unique
+  description  String?
+  fileType     String?
+  importedAt   DateTime @default(now())
+  recordCount  Int      @default(0)
+  status       String   @default("pending") // pending, importing, completed, failed
+
+  resources LearningResource[]
+  importJobs DatasetImportJob[]
+}
+
+model DatasetImportJob {
+  id           String   @id @default(cuid())
+  datasetId    String
+  status       String   @default("pending") // pending, running, completed, failed
+  totalRows    Int      @default(0)
+  importedRows Int      @default(0)
+  skippedRows  Int      @default(0)
+  rejectedRows Int      @default(0)
+  errorLog     String?  // JSON array of issues
+  startedAt    DateTime @default(now())
+  completedAt  DateTime?
+
+  dataset DatasetSource @relation(fields: [datasetId], references: [id], onDelete: Cascade)
+}

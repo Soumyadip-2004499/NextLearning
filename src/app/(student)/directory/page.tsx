@@ -1,0 +1,47 @@
+import { cookies } from "next/headers";
+import { redirect } from "next/navigation";
+import { getCurrentUser } from "@/lib/auth";
+import prisma from "@/lib/db";
+import { DirectoryClient } from "./directory-client";
+
+export default async function DirectoryPage() {
+  const cookieStore = await cookies();
+  const roleCookie = cookieStore.get("nextlearning_role")?.value || cookieStore.get("udaan_role")?.value;
+  const user = await getCurrentUser();
+
+  if (roleCookie === "FACILITATOR" || user?.role === "FACILITATOR") {
+    redirect("/facilitator/directory");
+  }
+  const organizations = await prisma.organization.findMany({
+    orderBy: [{ verified: "desc" }, { name: "asc" }],
+    take: 50,
+  });
+
+  const formattedOrgs = organizations.map((org) => {
+    let expertiseList: string[] = [];
+    if (org.expertise) {
+      try {
+        const parsed = JSON.parse(org.expertise);
+        expertiseList = Array.isArray(parsed) ? parsed : [org.expertise];
+      } catch {
+        expertiseList = [org.expertise];
+      }
+    }
+
+    return {
+      id: org.id,
+      name: org.name,
+      type: org.type,
+      description: org.description,
+      expertise: expertiseList,
+      location: org.location || "Pan-India",
+      serviceArea: org.serviceArea,
+      contactUrl: org.contactUrl,
+      website: org.website,
+      verified: org.verified,
+      isSampleData: org.isSampleData,
+    };
+  });
+
+  return <DirectoryClient initialOrganizations={formattedOrgs} />;
+}
