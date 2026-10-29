@@ -13,7 +13,7 @@ Unlike conventional job portals, static course websites, or generic chatbots, **
 2. **Learn**: Personalized milestone-based roadmaps connecting learners directly to accredited open educational resources (DIKSHA, SWAYAM, Skill India, Spoken Tutorials) and 20+ facilitator-created vocational training modules.
 3. **Connect & Earn**: Verified discovery and tracking for scholarships, apprenticeships (NAPS), government schemes (PM Surya Ghar, PM Vishwakarma, PM-YASASVI), and grassroots organizations.
 4. **Facilitate**: Village teachers, NGOs, and facilitators can mentor students, track progress, recommend opportunities, and build community training modules.
-5. **Low-Bandwidth & Voice-First**: Native Web Speech API integration, offline-first IndexedDB/localStorage sync queue, and mobile responsiveness.
+5. **Low-Bandwidth & Voice-First**: Native Web Speech API integration, offline-first IndexedDB/localStorage sync queue, and effective mobile responsiveness.
 
 ---
 
